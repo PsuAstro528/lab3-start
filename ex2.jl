@@ -15,10 +15,11 @@ end
 
 # ╔═╡ ac87ced2-986f-4e6c-80b2-104b25c171c2
 begin
-	using CSV, JLD2, HDF5, FITSIO, FileIO
+	using CSV, JLD2, FITSIO, FileIO# , HDF5
 	using DataFrames #, Query
 	using PyCall
 	using PlutoUI, PlutoTeachingTools
+	eval(Meta.parse(code_for_check_type_funcs))
 end
 
 # ╔═╡ e0e60e09-3808-4d6b-a773-6ba59c02f517
@@ -207,6 +208,9 @@ Do you think it involved allocating and copying lots of data from the dictionary
 # ╔═╡ afdc442a-2931-4129-824e-98431e1d8be2
 response_2a = missing
 
+# ╔═╡ c42deea3-acf1-491a-97bd-fdc472917584
+display_msg_if_fail(check_type_isa(:response_2a,response_2a,[AbstractString,Markdown.MD]))
+
 # ╔═╡ 7c1f4a27-dfd7-428a-97ef-eac1784e8d6f
 md"""By default `DataFrames` prioritizes _safe operations_ over efficient ones.  However, it also provides options for more efficient operations for times when users want to invest a little more time to get good performance.  For example, we can tell it not to copy the data, using `copycols=false`)."""
 
@@ -223,6 +227,9 @@ Did Julia make a new copy of all of the data?  How did the time required compare
 
 # ╔═╡ 52beb148-6214-4a03-a0cf-6c2a6da77d40
 response_2b = missing
+
+# ╔═╡ 1ecbd400-0157-45ce-b1b8-db764012ba5e
+display_msg_if_fail(check_type_isa(:response_2b,response_2b,[AbstractString,Markdown.MD]))
 
 # ╔═╡ 191ba96e-2573-4bc1-a352-46a66e0a5c4f
 md"""
@@ -265,6 +272,9 @@ Once you've made a prediction, mouse over the hint box below to see the sizes of
 # ╔═╡ 36bfd224-a13b-438c-9106-382c15a6a1d2
 response_2c = missing
 
+# ╔═╡ 7f4c3ab8-041e-4ef0-bb2e-320f5293cdde
+display_msg_if_fail(check_type_isa(:response_2c,response_2c,[AbstractString,Markdown.MD]))
+
 # ╔═╡ 195c2df4-7e1c-49f8-871f-f76b985dab6d
 begin
 	ipac_filesize = filesize(filename_ipac) /1024^2
@@ -282,6 +292,9 @@ md"""
 
 # ╔═╡ 507e1516-5433-49eb-831d-32426f30895e
 response_2d = missing
+
+# ╔═╡ eac67cc9-754b-4f7d-add8-93900a1b5b49
+display_msg_if_fail(check_type_isa(:response_2d,response_2d,[AbstractString,Markdown.MD]))
 
 # ╔═╡ 64224c6b-c5a0-44f2-b2a0-7f77759cb848
 md"""
@@ -306,11 +319,17 @@ md"""
 # ╔═╡ 57397ee4-9efc-48b3-b640-d2b7a10da633
 response_2e = missing
 
+# ╔═╡ 8059a6a3-384a-4344-8a23-650ee0be10c2
+display_msg_if_fail(check_type_isa(:response_2e,response_2e,[AbstractString,Markdown.MD]))
+
 # ╔═╡ f5b93929-2c59-4360-8c41-97a1324ba455
 md"2f. How do you think the sizes of the files in the two formats will compare?  Once you've made your prediction, mouse over the hint box.  If you were suprsised, try to explain what happened."
 
 # ╔═╡ 122196fa-45ca-4031-85eb-4afd4782de9e
 response_2f = missing
+
+# ╔═╡ e9dc1456-616b-4e4b-b209-9f6ba4c48607
+display_msg_if_fail(check_type_isa(:response_2f,response_2f,[AbstractString,Markdown.MD]))
 
 # ╔═╡ f15d37a7-d962-4da0-977f-76729a3313be
 hint(md"The IPAC file size is $ipac_filesize MB versus $csv_filesize MB for the CSV.")
@@ -333,6 +352,9 @@ end;
 
 # ╔═╡ df9b701f-d314-4512-b2ea-1f6ae015166c
 response_2g = missing
+
+# ╔═╡ 377f7527-a338-4526-bb24-9766c635e719
+display_msg_if_fail(check_type_isa(:response_2g,response_2g,[AbstractString,Markdown.MD]))
 
 # ╔═╡ 25f24754-16d4-4343-b54a-cf8ea1358ce9
 begin 
@@ -368,6 +390,9 @@ md"2h.  How long do you think it will take to load the data from the JLD2 file? 
 # ╔═╡ c3065acf-6205-455f-ba74-ca51f3f6761b
 response_2h = missing
 
+# ╔═╡ 9c392be9-1505-40bc-a290-68085a1c2700
+display_msg_if_fail(check_type_isa(:response_2h,response_2h,[AbstractString,Markdown.MD]))
+
 # ╔═╡ d738bdcc-5f83-4dfa-a17f-e9ea23db2986
 md"""
 Now time how long it takes to load the data from the JLD2 file.
@@ -391,6 +416,9 @@ md"""
 # ╔═╡ 01201c37-0b79-46b1-a001-e716f5b3ba67
 response_2i = missing
 
+# ╔═╡ e3d37bc1-a119-4add-a111-899ee0caea05
+display_msg_if_fail(check_type_isa(:response_2i,response_2i,[AbstractString,Markdown.MD]))
+
 # ╔═╡ 6dff3f21-fac0-42e1-910a-f969a231374f
 md"""
 Next, we'll compare the filesizes for the JLD2 file to the CSV file.  
@@ -400,6 +428,9 @@ Next, we'll compare the filesizes for the JLD2 file to the CSV file.
 
 # ╔═╡ b26b8253-e6cd-49f4-81c5-2a3c2963a37c
 response_2j = missing
+
+# ╔═╡ e5dc123f-1596-4311-9398-f0cfe80a5342
+display_msg_if_fail(check_type_isa(:response_2j,response_2j,[AbstractString,Markdown.MD]))
 
 # ╔═╡ 7b9d26c2-899e-45e9-b664-39d5f1adfe3f
 begin 
@@ -429,7 +460,10 @@ md"Now we can time how long it takes to write and read the data as FITS files."
 md"2k.  How do the read/write times and file sizes for FITS compare to CSV and JLD2?"
 
 # ╔═╡ 3745c237-ba48-4f2c-959e-441484244764
-respsonse_2k = missing
+response_2k = missing
+
+# ╔═╡ 6d061411-6f19-4119-aefb-cc380198b0ce
+display_msg_if_fail(check_type_isa(:response_2k,response_2k,[AbstractString,Markdown.MD]))
 
 # ╔═╡ 8def87d2-f10b-4a82-b353-a6477eeead9b
 md"## Implications for your project"
@@ -443,6 +477,9 @@ Will your project need to transfer large files over the internet?  If so, very r
 # ╔═╡ 55438c09-1d94-4ff7-90c3-0cc6064a091e
 response_2l = missing
 
+# ╔═╡ bcc796c9-db11-4a09-a5f9-215127ac0938
+display_msg_if_fail(check_type_isa(:response_2l,response_2l,[AbstractString,Markdown.MD]))
+
 # ╔═╡ 92b2ecdd-9491-4f16-8cb9-bacbcf180280
 md"""
 2m.  Will your project need to read in any input files?  If so, what format are they in?  
@@ -451,6 +488,9 @@ I assume everyone's project code will write at least some output files?  Very ro
 
 # ╔═╡ 83216915-cdcf-4f0f-829f-a5ff4c4b8da0
 response_2m = missing
+
+# ╔═╡ 452872f9-2009-4733-b2d3-28f262ae19b7
+display_msg_if_fail(check_type_isa(:response_2m,response_2m,[AbstractString,Markdown.MD]))
 
 # ╔═╡ 29415ddc-e002-4f56-a169-95f7b1c36be9
 md"# Helper Functions"
@@ -548,7 +588,6 @@ CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -559,7 +598,6 @@ CSV = "~0.8.5"
 DataFrames = "~1.2.2"
 FITSIO = "~0.16.7"
 FileIO = "~1.10.1"
-HDF5 = "~0.15.6"
 JLD2 = "~0.4.13"
 PlutoTeachingTools = "~0.1.3"
 PlutoUI = "~0.7.9"
@@ -578,18 +616,6 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[Blosc]]
-deps = ["Blosc_jll"]
-git-tree-sha1 = "84cf7d0f8fd46ca6f1b3e0305b4b4a37afe50fd6"
-uuid = "a74b3585-a348-5f62-a45c-50e91977d574"
-version = "0.7.0"
-
-[[Blosc_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Lz4_jll", "Pkg", "Zlib_jll", "Zstd_jll"]
-git-tree-sha1 = "e747dac84f39c62aff6956651ec359686490134e"
-uuid = "0b7ba130-8d10-5ba8-a3d6-c5182647fed9"
-version = "1.21.0+0"
 
 [[CFITSIO]]
 deps = ["CFITSIO_jll"]
@@ -686,18 +712,6 @@ version = "0.4.2"
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
-[[HDF5]]
-deps = ["Blosc", "Compat", "HDF5_jll", "Libdl", "Mmap", "Random", "Requires"]
-git-tree-sha1 = "83173193dc242ce4b037f0263a7cc45afb5a0b85"
-uuid = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
-version = "0.15.6"
-
-[[HDF5_jll]]
-deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "OpenSSL_jll", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "fd83fa0bde42e01952757f01149dd968c06c4dba"
-uuid = "0234f1f7-429e-5d53-9886-15a909be8d59"
-version = "1.12.0+1"
-
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
@@ -762,12 +776,6 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
-[[Lz4_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "5d494bc6e85c4c9b626ee0cab05daa4085486ab1"
-uuid = "5ced341a-0733-55b8-9ab6-a4889d929147"
-version = "1.9.3+0"
-
 [[MacroTools]]
 deps = ["Markdown", "Random"]
 git-tree-sha1 = "0fb723cd8c45858c22169b2e42269e53271a6df7"
@@ -796,12 +804,6 @@ uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
-
-[[OpenSSL_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "15003dcb7d8db3c6c857fda14891a539a8f2705a"
-uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
-version = "1.1.10+0"
 
 [[OrderedCollections]]
 git-tree-sha1 = "85f8e6578bf1f9ee0d11e7bb1b1456435479d47c"
@@ -961,12 +963,6 @@ version = "1.2.0"
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 
-[[Zstd_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "cc4bf3fdde8b7e3e9fa0351bdeedba1cf3b7f6e6"
-uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
-version = "1.5.0+0"
-
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
@@ -1008,43 +1004,53 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═9257c879-d96f-4d2b-994e-d542617b0c65
 # ╟─307a7a29-afa6-4c4d-88ae-4f757aeba892
 # ╠═afdc442a-2931-4129-824e-98431e1d8be2
+# ╟─c42deea3-acf1-491a-97bd-fdc472917584
 # ╟─7c1f4a27-dfd7-428a-97ef-eac1784e8d6f
 # ╠═97111ccc-8a16-4e7d-adf7-0dcd90524be3
 # ╟─f45668b1-1cbd-48e6-9224-d469826e093b
 # ╠═52beb148-6214-4a03-a0cf-6c2a6da77d40
+# ╟─1ecbd400-0157-45ce-b1b8-db764012ba5e
 # ╟─191ba96e-2573-4bc1-a352-46a66e0a5c4f
 # ╠═82a757ad-566d-4c1d-8b3d-366ffd980fb4
 # ╟─3e550b71-4750-460b-be18-911a848a8f49
 # ╠═b0c3875b-ef07-4e92-a0a8-55f42b266c6b
 # ╟─58e021c6-500f-40d8-a388-a5732bc808b3
 # ╠═36bfd224-a13b-438c-9106-382c15a6a1d2
+# ╟─7f4c3ab8-041e-4ef0-bb2e-320f5293cdde
 # ╟─195c2df4-7e1c-49f8-871f-f76b985dab6d
 # ╟─32124f8a-f5cf-41d1-97a9-ce1d05145fde
 # ╠═507e1516-5433-49eb-831d-32426f30895e
+# ╟─eac67cc9-754b-4f7d-add8-93900a1b5b49
 # ╟─64224c6b-c5a0-44f2-b2a0-7f77759cb848
 # ╟─73c06bb1-be49-46bd-b7f1-c45cc56af7b4
 # ╟─ebfaa677-829b-4bf9-bdbb-19f3c87dd3a4
 # ╟─945f5a55-3026-4497-9ece-8af878c87788
 # ╠═57397ee4-9efc-48b3-b640-d2b7a10da633
+# ╟─8059a6a3-384a-4344-8a23-650ee0be10c2
 # ╟─f5b93929-2c59-4360-8c41-97a1324ba455
 # ╠═122196fa-45ca-4031-85eb-4afd4782de9e
+# ╟─e9dc1456-616b-4e4b-b209-9f6ba4c48607
 # ╟─f15d37a7-d962-4da0-977f-76729a3313be
 # ╟─28f195c4-4f61-4873-85d6-b4e3aaa3660f
 # ╠═3837e439-250b-4577-b0d7-93352ec19f6e
 # ╟─8255b5a9-cbe6-4604-bedd-0e366f311096
 # ╠═df9b701f-d314-4512-b2ea-1f6ae015166c
+# ╟─377f7527-a338-4526-bb24-9766c635e719
 # ╟─25f24754-16d4-4343-b54a-cf8ea1358ce9
 # ╟─570fd826-23fd-46ee-bdb4-58fb0c45719a
 # ╠═691410bb-0472-4800-a90d-29ddf947de3e
 # ╟─8cbb1c90-bd94-44b5-80b6-81d38f3e6252
 # ╠═c3065acf-6205-455f-ba74-ca51f3f6761b
+# ╟─9c392be9-1505-40bc-a290-68085a1c2700
 # ╟─d738bdcc-5f83-4dfa-a17f-e9ea23db2986
 # ╟─d55ce157-099c-4c1b-94db-62918f04e5fe
 # ╟─206f464b-55fe-46aa-85b7-8f0246a0aaad
 # ╟─6f72d1b2-63f6-4301-8272-bb2d6d2d049e
 # ╠═01201c37-0b79-46b1-a001-e716f5b3ba67
+# ╟─e3d37bc1-a119-4add-a111-899ee0caea05
 # ╠═6dff3f21-fac0-42e1-910a-f969a231374f
 # ╠═b26b8253-e6cd-49f4-81c5-2a3c2963a37c
+# ╟─e5dc123f-1596-4311-9398-f0cfe80a5342
 # ╟─7b9d26c2-899e-45e9-b664-39d5f1adfe3f
 # ╟─fc01d57f-c90b-4231-96be-ddd48656d55e
 # ╠═e05f16d6-eb50-49a9-bf14-95d63c9da7ff
@@ -1055,11 +1061,14 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─90d5244e-17be-4601-b922-8c254f1248bf
 # ╟─ae79ee89-d788-4612-8b1d-fc22d85c7744
 # ╠═3745c237-ba48-4f2c-959e-441484244764
+# ╟─6d061411-6f19-4119-aefb-cc380198b0ce
 # ╟─8def87d2-f10b-4a82-b353-a6477eeead9b
 # ╟─c74b3105-f480-4688-b85f-3e7dff70da3b
 # ╠═55438c09-1d94-4ff7-90c3-0cc6064a091e
+# ╟─bcc796c9-db11-4a09-a5f9-215127ac0938
 # ╟─92b2ecdd-9491-4f16-8cb9-bacbcf180280
 # ╠═83216915-cdcf-4f0f-829f-a5ff4c4b8da0
+# ╟─452872f9-2009-4733-b2d3-28f262ae19b7
 # ╠═29415ddc-e002-4f56-a169-95f7b1c36be9
 # ╠═ac87ced2-986f-4e6c-80b2-104b25c171c2
 # ╠═1e53aa10-dff6-40d5-89e2-da194ffc2052
