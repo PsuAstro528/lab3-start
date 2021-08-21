@@ -109,7 +109,10 @@ begin
 end
 
 # ╔═╡ 5478f83c-e629-4905-a3be-e3027a54d2aa
-@bind go_benchmarks1 Button("I'm ready to run the benchmarks.")
+md"""
+I'm ready to run the benchmarks. $(@bind ready_benchmarks1 CheckBox()) 
+$(@bind go_benchmarks1 Button("Rerun the benchmarks."))
+"""
 
 # ╔═╡ 1bf00606-bdf8-45b1-bf4b-4819029cf2af
 tip(md"Remember, we need to make sure your functions have been compiled once before benchmarking for accurate measurements.  We'll use use the [BenchmarkTools.jl package](https://github.com/JuliaCI/BenchmarkTools.jl/)'s macros, `@belapsed`, `@btime` and `@benchmark` to automate that for us.")
@@ -125,14 +128,24 @@ begin  # Create matrix and vector for first set of benchmarks
 	test_in_b1 = rand(ncols_benchmark1)
 end;
 
+# ╔═╡ dca91552-f7b5-4e00-8868-0aa70e93b8b9
+if ready_benchmarks1 
+	md"#### Default Matrix Vector Multiply"
+end
+
 # ╔═╡ 45319819-e088-4608-bec4-b71848912fd8
-begin 
+if ready_benchmarks1 
 	go_benchmarks1
 	@benchmark multiply_matrix_vector_default($test_in_A1,$test_in_b1)
 end
 
+# ╔═╡ 454faa95-2134-436d-a39b-02137ba4e9fa
+if ready_benchmarks1 
+	md"#### Hand-written Inner Loop over Rows"
+end
+
 # ╔═╡ af72841c-1f0e-4aa7-a2ed-d01c787b9f31
-begin
+if ready_benchmarks1 && !ismissing(multiply_matrix_vector_rows_inner(test_in_A1,test_in_b1))
 	go_benchmarks1
 	@benchmark multiply_matrix_vector_rows_inner($test_in_A1,$test_in_b1)
 end
@@ -148,11 +161,26 @@ begin    # Create matrix and vector for second set of benchmarks
 	test_in_b2 = rand(ncols_benchmark2)
 end;
 
+# ╔═╡ b0d24460-5bda-4ab0-9735-319a1cec55eb
+if ready_benchmarks1 
+	md"#### Default Matrix Vector Multiply"
+end
+
 # ╔═╡ e536cf92-6c80-4b1d-b849-c5a9ab542e9f
-@benchmark multiply_matrix_vector_default($test_in_A2,$test_in_b2)
+if ready_benchmarks1
+	@benchmark multiply_matrix_vector_default($test_in_A2,$test_in_b2)
+end
+
+# ╔═╡ 28e265b6-148f-418a-a01f-79986d155c90
+if ready_benchmarks1 
+	md"#### Hand-written Inner Loop over Rows"
+end
 
 # ╔═╡ 5929d265-8c2f-488d-9a44-9a95b238c0e8
-@benchmark multiply_matrix_vector_rows_inner($test_in_A2,$test_in_b2)
+if ready_benchmarks1 && !ismissing(multiply_matrix_vector_rows_inner(test_in_A1,test_in_b1))
+	go_benchmarks1
+	@benchmark multiply_matrix_vector_rows_inner($test_in_A2,$test_in_b2)
+end
 
 # ╔═╡ 1693883a-8d93-4845-9082-4be0406455f7
 md"""1d.  How did the results compare to your expectations?
@@ -305,13 +333,16 @@ begin
 end
 
 # ╔═╡ 607e4344-662b-4aa9-95b5-20339cf22a96
-@bind go_benchmarks2 Button("I'm ready to run the benchmarks.")
+md"""
+I'm ready to run the benchmarks. $(@bind ready_benchmarks2 CheckBox()) 
+$(@bind go_benchmarks2 Button("Rerun the benchmarks."))
+"""
 
 # ╔═╡ e44f3c77-c7a6-4d2a-a9f4-a167009c2008
 md"#### Benchmarks for inner loop over collumns, small problem size"
 
 # ╔═╡ b2596db9-019e-4cee-8680-113dcaeb09eb
-begin 
+if ready_benchmarks2 && !ismissing(multiply_matrix_vector_cols_inner(test_in_A1,test_in_b1))
 	go_benchmarks2
 	@benchmark multiply_matrix_vector_cols_inner($test_in_A1,$test_in_b1)
 end
@@ -320,7 +351,7 @@ end
 md"#### Benchmarks for inner loop over columns, larger problem size"
 
 # ╔═╡ 57f0d4a5-2b4d-45cb-941c-2f0f369cfc2c
-begin 
+if ready_benchmarks2 && !ismissing(multiply_matrix_vector_cols_inner(test_in_A1,test_in_b1))
 	go_benchmarks2
 	@benchmark multiply_matrix_vector_cols_inner($test_in_A2,$test_in_b2)
 end
@@ -436,6 +467,9 @@ end
 # ╔═╡ ec61c53b-c777-4fbc-b73e-6878e5e6e8c4
 md"# Helper Code"
 
+# ╔═╡ 1168a71d-ddad-4d4f-bc37-8b609e3ab47e
+ChooseDisplayMode()
+
 # ╔═╡ 6a9e8fe0-259b-4826-9eaa-667cdbb8dfca
 TableOfContents()
 
@@ -514,9 +548,9 @@ version = "0.12.8"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "344f143fa0ec67e47917848795ab19c6a455f32c"
+git-tree-sha1 = "727e463cfebd0c7b999bbf3e9e7e16f254b94193"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "3.32.0"
+version = "3.34.0"
 
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -834,9 +868,9 @@ version = "0.3.1"
 
 [[Missings]]
 deps = ["DataAPI"]
-git-tree-sha1 = "4ea90bd5d3985ae1f9a908bd4500ae88921c5ce7"
+git-tree-sha1 = "2ca267b08821e86c5ef4376cffed98a46c2cb205"
 uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
-version = "1.0.0"
+version = "1.0.1"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
@@ -883,9 +917,9 @@ version = "8.44.0+0"
 
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "477bf42b4d1496b454c10cce46645bb5b8a0cf2c"
+git-tree-sha1 = "438d35d2d95ae2c5e8780b330592b6de8494e779"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.0.2"
+version = "2.0.3"
 
 [[Pixman_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -917,9 +951,9 @@ version = "1.20.1"
 
 [[PlutoTeachingTools]]
 deps = ["LaTeXStrings", "Markdown", "PlutoUI", "Random"]
-git-tree-sha1 = "265980831960aabe7e1f5ae47c898a8459588ee7"
+git-tree-sha1 = "e2b63ee022e0b20f43fcd15cda3a9047f449e3b4"
 uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
-version = "0.1.3"
+version = "0.1.4"
 
 [[PlutoTest]]
 deps = ["HypertextLiteral", "InteractiveUtils", "Markdown", "Test"]
@@ -958,9 +992,9 @@ deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[RecipesBase]]
-git-tree-sha1 = "b3fb709f3c97bfc6e948be68beeecb55a0b340ae"
+git-tree-sha1 = "44a75aa7a527910ee3d1751d1f0e4148698add9e"
 uuid = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
-version = "1.1.1"
+version = "1.1.2"
 
 [[RecipesPipeline]]
 deps = ["Dates", "NaNMath", "PlotUtils", "RecipesBase"]
@@ -1294,7 +1328,7 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
-# ╠═6856a387-a359-45ae-a70a-7eb6665097bd
+# ╟─6856a387-a359-45ae-a70a-7eb6665097bd
 # ╟─b15b1a8d-b5cb-4cc2-933d-122d385501f8
 # ╠═182715b2-d99d-4a01-aa92-b5dd68804540
 # ╟─0024c171-234c-4c4b-9742-064ad8136451
@@ -1311,12 +1345,16 @@ version = "0.9.1+5"
 # ╟─1bf00606-bdf8-45b1-bf4b-4819029cf2af
 # ╟─33574612-36b9-45ff-bb5b-ecba257ca5c3
 # ╠═0b81ae59-a5b2-4151-b0a5-1de070b59520
-# ╠═45319819-e088-4608-bec4-b71848912fd8
-# ╠═af72841c-1f0e-4aa7-a2ed-d01c787b9f31
+# ╟─dca91552-f7b5-4e00-8868-0aa70e93b8b9
+# ╟─45319819-e088-4608-bec4-b71848912fd8
+# ╟─454faa95-2134-436d-a39b-02137ba4e9fa
+# ╟─af72841c-1f0e-4aa7-a2ed-d01c787b9f31
 # ╟─a1d17f60-118c-4f3e-8918-50d1411e268b
-# ╠═fb42c219-6312-4325-a362-5d8f8d20fd91
-# ╠═e536cf92-6c80-4b1d-b849-c5a9ab542e9f
-# ╠═5929d265-8c2f-488d-9a44-9a95b238c0e8
+# ╟─fb42c219-6312-4325-a362-5d8f8d20fd91
+# ╟─b0d24460-5bda-4ab0-9735-319a1cec55eb
+# ╟─e536cf92-6c80-4b1d-b849-c5a9ab542e9f
+# ╟─28e265b6-148f-418a-a01f-79986d155c90
+# ╟─5929d265-8c2f-488d-9a44-9a95b238c0e8
 # ╟─1693883a-8d93-4845-9082-4be0406455f7
 # ╠═61b27b51-2e73-4140-8579-ca62920c4326
 # ╟─fb912d1a-5465-4b79-b059-8d8ee798479d
@@ -1341,7 +1379,7 @@ version = "0.9.1+5"
 # ╟─e44f3c77-c7a6-4d2a-a9f4-a167009c2008
 # ╠═b2596db9-019e-4cee-8680-113dcaeb09eb
 # ╟─4b8f0b1d-17d7-4b69-a485-1443e84ce167
-# ╟─57f0d4a5-2b4d-45cb-941c-2f0f369cfc2c
+# ╠═57f0d4a5-2b4d-45cb-941c-2f0f369cfc2c
 # ╟─52f48403-263b-4a6a-82dc-26671f4e7871
 # ╠═99fd596c-efae-4cf1-8e91-f46b5791f3f3
 # ╟─a65d3972-9870-4a76-bba7-bcaccc10ecfb
@@ -1361,6 +1399,7 @@ version = "0.9.1+5"
 # ╠═d59f6e79-4376-42ec-abdc-baa0b4541009
 # ╟─d946cca6-a261-436d-bc56-6d1345c081d3
 # ╟─ec61c53b-c777-4fbc-b73e-6878e5e6e8c4
+# ╟─1168a71d-ddad-4d4f-bc37-8b609e3ab47e
 # ╠═06e16a4a-fdc3-11eb-0462-d3dce4d54728
 # ╠═6a9e8fe0-259b-4826-9eaa-667cdbb8dfca
 # ╟─00000000-0000-0000-0000-000000000001

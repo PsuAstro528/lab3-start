@@ -302,13 +302,16 @@ Now, try reading it in and see.
 """
 
 # ╔═╡ 73c06bb1-be49-46bd-b7f1-c45cc56af7b4
-@bind go_read_csv Button("Benchmark reading CSV file.")
+md"""
+I'm ready to benchmark reading a CSV file. $(@bind ready_read_csv CheckBox()) 
+$(@bind go_read_csv Button("Rerun the benchmarks."))
+"""
 
 # ╔═╡ ebfaa677-829b-4bf9-bdbb-19f3c87dd3a4
-begin
+if  ready_read_csv
 	go_read_csv
 	time_read_csv = @elapsed df_csv = CSV.read(filename_csv, DataFrame)
-	hint(md"It took $time_read_csv seconds to read the CSV file.")
+	md"It took $time_read_csv seconds to read the CSV file."
 end
 
 # ╔═╡ 945f5a55-3026-4497-9ece-8af878c87788
@@ -399,13 +402,16 @@ Now time how long it takes to load the data from the JLD2 file.
 """
 
 # ╔═╡ d55ce157-099c-4c1b-94db-62918f04e5fe
-@bind go_read_jld2 Button("Benchmark reading the JLD2 file.")
+md"""
+I'm ready to benchmark reading a JLD2 file. $(@bind ready_read_jld2 CheckBox()) 
+$(@bind go_read_jld2 Button("Rerun the benchmarks."))
+"""
 
 # ╔═╡ 206f464b-55fe-46aa-85b7-8f0246a0aaad
-begin 
+if ready_read_jld2
 	go_read_jld2
 	time_read_jld2 = @elapsed df_jld2_read_back_in = load(filename_jld2, "df")
-	hint(md"It took $time_read_jld2 seconds to read the JLD2 file.")
+	md"It took $time_read_jld2 seconds to read the JLD2 file."
 end
 
 # ╔═╡ 6f72d1b2-63f6-4301-8272-bb2d6d2d049e
@@ -454,7 +460,10 @@ Unfortunately, the FITSIO package isn't as polished as the others.  It expects a
 md"Now we can time how long it takes to write and read the data as FITS files."
 
 # ╔═╡ 568862b3-6fce-426a-a9e2-e558adf3932a
-@bind go_read_fits Button("Benchmark reading the FITS file.")
+md"""
+I'm ready to benchmark reading a FITS file. $(@bind ready_read_fits CheckBox()) 
+$(@bind go_read_fits Button("Rerun the benchmarks."))
+"""
 
 # ╔═╡ ae79ee89-d788-4612-8b1d-fc22d85c7744
 md"2k.  How do the read/write times and file sizes for FITS compare to CSV and JLD2?"
@@ -494,6 +503,9 @@ display_msg_if_fail(check_type_isa(:response_2m,response_2m,[AbstractString,Mark
 
 # ╔═╡ 29415ddc-e002-4f56-a169-95f7b1c36be9
 md"# Helper Functions"
+
+# ╔═╡ fb23d6c6-b812-4fe1-b224-0014bedbd43f
+ChooseDisplayMode()
 
 # ╔═╡ 1e53aa10-dff6-40d5-89e2-da194ffc2052
 TableOfContents()
@@ -575,10 +587,10 @@ begin
 end
 
 # ╔═╡ 52f9edd0-79b0-4a9a-9930-3a05d3aa2447
-begin
+if ready_read_fits
 	go_read_fits
 	time_read_fits = @elapsed read_fits_tables(filename_fits)
-	hint(md"It took $time_read_fits seconds to read the FITS file.")
+	md"It took $time_read_fits seconds to read the FITS file."
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -619,9 +631,9 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[CFITSIO]]
 deps = ["CFITSIO_jll"]
-git-tree-sha1 = "8f614fbc089bf62830cbcea8b91deedf7873db4f"
+git-tree-sha1 = "c860f5545064216f86aa3365ec186ce7ced6a935"
 uuid = "3b1b4be9-1499-4b22-8d78-7db3344d1961"
-version = "1.2.0"
+version = "1.3.0"
 
 [[CFITSIO_jll]]
 deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "Pkg"]
@@ -637,9 +649,9 @@ version = "0.8.5"
 
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
-git-tree-sha1 = "344f143fa0ec67e47917848795ab19c6a455f32c"
+git-tree-sha1 = "727e463cfebd0c7b999bbf3e9e7e16f254b94193"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "3.32.0"
+version = "3.34.0"
 
 [[Conda]]
 deps = ["JSON", "VersionParsing"]
@@ -792,9 +804,9 @@ uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 
 [[Missings]]
 deps = ["DataAPI"]
-git-tree-sha1 = "4ea90bd5d3985ae1f9a908bd4500ae88921c5ce7"
+git-tree-sha1 = "2ca267b08821e86c5ef4376cffed98a46c2cb205"
 uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
-version = "1.0.0"
+version = "1.0.1"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
@@ -822,9 +834,9 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlutoTeachingTools]]
 deps = ["LaTeXStrings", "Markdown", "PlutoUI", "Random"]
-git-tree-sha1 = "265980831960aabe7e1f5ae47c898a8459588ee7"
+git-tree-sha1 = "e2b63ee022e0b20f43fcd15cda3a9047f449e3b4"
 uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
-version = "0.1.3"
+version = "0.1.4"
 
 [[PlutoUI]]
 deps = ["Base64", "Dates", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "Suppressor"]
@@ -884,9 +896,9 @@ uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [[SentinelArrays]]
 deps = ["Dates", "Random"]
-git-tree-sha1 = "a3a337914a035b2d59c9cbe7f1a38aaba1265b02"
+git-tree-sha1 = "54f37736d8934a12a200edea2f9206b03bdf3159"
 uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.3.6"
+version = "1.3.7"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -996,7 +1008,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─02f638d9-ec2f-4072-9fb3-e6fabac1b1e6
 # ╠═481c5b7a-4660-4954-84f3-29d33bd73f3d
 # ╟─aba84742-a927-4ce5-9f7c-6e535db1ee47
-# ╠═aa7c4dfe-a3d4-448b-a559-1bc7b338a1dc
+# ╟─aa7c4dfe-a3d4-448b-a559-1bc7b338a1dc
 # ╠═a97f9c8e-dbd3-4613-9c6e-c471340ea2d6
 # ╟─7c7430a0-d16e-485b-bbd9-7f231fee853a
 # ╟─cebe52b3-386c-4d31-8497-c19b6c742577
@@ -1048,7 +1060,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─6f72d1b2-63f6-4301-8272-bb2d6d2d049e
 # ╠═01201c37-0b79-46b1-a001-e716f5b3ba67
 # ╟─e3d37bc1-a119-4add-a111-899ee0caea05
-# ╠═6dff3f21-fac0-42e1-910a-f969a231374f
+# ╟─6dff3f21-fac0-42e1-910a-f969a231374f
 # ╠═b26b8253-e6cd-49f4-81c5-2a3c2963a37c
 # ╟─e5dc123f-1596-4311-9398-f0cfe80a5342
 # ╟─7b9d26c2-899e-45e9-b664-39d5f1adfe3f
@@ -1069,9 +1081,10 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─92b2ecdd-9491-4f16-8cb9-bacbcf180280
 # ╠═83216915-cdcf-4f0f-829f-a5ff4c4b8da0
 # ╟─452872f9-2009-4733-b2d3-28f262ae19b7
-# ╠═29415ddc-e002-4f56-a169-95f7b1c36be9
-# ╠═ac87ced2-986f-4e6c-80b2-104b25c171c2
+# ╟─29415ddc-e002-4f56-a169-95f7b1c36be9
+# ╟─fb23d6c6-b812-4fe1-b224-0014bedbd43f
 # ╠═1e53aa10-dff6-40d5-89e2-da194ffc2052
+# ╠═ac87ced2-986f-4e6c-80b2-104b25c171c2
 # ╠═14cca8ce-cc61-4fae-b871-21c3fd23d0ea
 # ╠═28fc8de4-749b-4093-b32f-c398f8d27d3d
 # ╠═57b422e5-0ad0-4674-bdd3-a8358bc7aaeb
