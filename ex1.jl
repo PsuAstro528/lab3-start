@@ -56,6 +56,25 @@ function multiply_matrix_vector_rows_inner(A::Matrix{T1}, b::Vector{T2})  where 
 	return missing
 end
 
+# ╔═╡ 8723c88f-21eb-4980-876c-cc5d12e48df5
+begin
+	rows_inner_is_good_to_go = false
+    if !@isdefined(multiply_matrix_vector_rows_inner)
+   		func_not_defined(:multiply_matrix_vector_rows_inner)
+    elseif length(methods(multiply_matrix_vector_rows_inner,[Matrix,Vector])) <1
+        PlutoTeachingTools.warning_box(md"`multiply_matrix_vector_rows_inner` should take a `Matrix` and an `Array` as arguemetns")
+    elseif ismissing(multiply_matrix_vector_rows_inner([1 2 3; 4 5 6; 7 8 9],[1,2,3]))
+        still_missing()
+    elseif size(multiply_matrix_vector_rows_inner([1 2 3; 4 5 6; 7 8 9],[1,2,3]))!=(3,)
+        almost(md"The size of the `multiply_matrix_vector_rows_inner`'s output isn't right.")
+    elseif multiply_matrix_vector_rows_inner([1 2 3; 4 5 6; 7 8 9],[1,2,3])!=[14,32,50]
+        almost(md"The values of the output vector aren't right.")
+    else
+        rows_inner_is_good_to_go = true
+        correct(md"I don't recognize a problem.  Before we keep going, let's check that your function passes the test function that you build above.")
+    end
+end
+
 # ╔═╡ fe202fd4-6d65-4b2e-afa7-67b9ff67f8f0
 md"""
 ### Regression testing (1/2)
@@ -252,7 +271,7 @@ function multiply_matrix_vector_cols_inner(A::AbstractMatrix{T1}, b::AbstractVec
 end
 
 
-# ╔═╡ 8723c88f-21eb-4980-876c-cc5d12e48df5
+# ╔═╡ ec6f0940-c62c-4387-ba9d-f1deb75ccaef
 begin
 	cols_inner_is_good_to_go = false
     if !@isdefined(multiply_matrix_vector_cols_inner)
@@ -268,25 +287,6 @@ begin
     else
         cols_inner_is_good_to_go = true
         correct()
-    end
-end
-
-# ╔═╡ ec6f0940-c62c-4387-ba9d-f1deb75ccaef
-begin
-	rows_inner_is_good_to_go = false
-    if !@isdefined(multiply_matrix_vector_rows_inner)
-   		func_not_defined(:multiply_matrix_vector_rows_inner)
-    elseif length(methods(multiply_matrix_vector_rows_inner,[Matrix,Vector])) <1
-        PlutoTeachingTools.warning_box(md"`multiply_matrix_vector_rows_inner` should take a `Matrix` and an `Array` as arguemetns")
-    elseif ismissing(multiply_matrix_vector_rows_inner([1 2 3; 4 5 6; 7 8 9],[1,2,3]))
-        still_missing()
-    elseif size(multiply_matrix_vector_rows_inner([1 2 3; 4 5 6; 7 8 9],[1,2,3]))!=(3,)
-        almost(md"The size of the `multiply_matrix_vector_rows_inner`'s output isn't right.")
-    elseif multiply_matrix_vector_rows_inner([1 2 3; 4 5 6; 7 8 9],[1,2,3])!=[14,32,50]
-        almost(md"The values of the output vector aren't right.")
-    else
-        rows_inner_is_good_to_go = true
-        correct(md"I don't recognize a problem.  Before we keep going, let's check that your function passes the test function that you build above.")
     end
 end
 
@@ -357,7 +357,7 @@ if ready_benchmarks2 && !ismissing(multiply_matrix_vector_cols_inner(test_in_A1,
 end
 
 # ╔═╡ 52f48403-263b-4a6a-82dc-26671f4e7871
-md"How did your function looping over rows in the inner loop perform?  How did the results compare to your predictions?"
+md"How did your function looping over columns in the inner loop perform?  How did the results compare to your predictions?"
 
 # ╔═╡ 99fd596c-efae-4cf1-8e91-f46b5791f3f3
 response_1h = missing
@@ -1380,7 +1380,7 @@ version = "0.9.1+5"
 # ╠═b2596db9-019e-4cee-8680-113dcaeb09eb
 # ╟─4b8f0b1d-17d7-4b69-a485-1443e84ce167
 # ╠═57f0d4a5-2b4d-45cb-941c-2f0f369cfc2c
-# ╟─52f48403-263b-4a6a-82dc-26671f4e7871
+# ╠═52f48403-263b-4a6a-82dc-26671f4e7871
 # ╠═99fd596c-efae-4cf1-8e91-f46b5791f3f3
 # ╟─a65d3972-9870-4a76-bba7-bcaccc10ecfb
 # ╟─9028e886-dd3a-4c68-a4e9-d3f9ae65cbdf
