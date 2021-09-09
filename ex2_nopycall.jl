@@ -108,11 +108,12 @@ $(@bind go_read_csv Button("Rerun the benchmarks."))
 if  ready_read_csv
 	go_read_csv
 	time_read_csv = @elapsed df_csv = CSV.read(filename_csv, DataFrame)
+	already_benchmarked_csv_read = true
 	md"It took $time_read_csv seconds to read the CSV file."
 end
 
 # ╔═╡ b0c3875b-ef07-4e92-a0a8-55f42b266c6b
-begin 
+if already_benchmarked_csv_read
 	ready_read_csv
 	df = CSV.read(filename_csv,DataFrame,types=Dict(:TCE_ID=>String))
 end

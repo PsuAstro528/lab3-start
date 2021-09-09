@@ -24,5 +24,7 @@ From a Pluto session, work through ex1.jl
 - Use results to help choose an appropriate file formats for your project
 
 From your Pluto sesion,  work through ex2.jl
-
-
+If you encounter difficulties with the PyCall package being build successfully, then I suggest that you:
+- Close ex2.jl.  
+- Open and work through ex2_nopycall.jl instead.  
+- Don't worry about the continuous integration tests for ex2.
