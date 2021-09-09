@@ -108,13 +108,14 @@ $(@bind go_read_csv Button("Rerun the benchmarks."))
 if  ready_read_csv
 	go_read_csv
 	time_read_csv = @elapsed df_csv = CSV.read(filename_csv, DataFrame)
+	already_benchmarked_csv_read = true
 	md"It took $time_read_csv seconds to read the CSV file."
 end
 
 # ╔═╡ b0c3875b-ef07-4e92-a0a8-55f42b266c6b
-begin 
+if already_benchmarked_csv_read
 	ready_read_csv
-	df = CSV.read(filename_csv,DataFrame,types=Dict(:TCE_ID=>String))
+	df = CSV.read(filename_csv,DataFrame,types=Dict(:TCE_ID=>String),missingstring="NA")
 end
 
 # ╔═╡ 945f5a55-3026-4497-9ece-8af878c87788
@@ -329,9 +330,11 @@ ChooseDisplayMode()
 TableOfContents()
 
 # ╔═╡ 14cca8ce-cc61-4fae-b871-21c3fd23d0ea
-"Convert a DataFrame to a Dict, replacing missing values with 0 or an empty string."
+"Convert a DataFrame to a Dict"
 function convert_dataframe_to_dict_remove_missing(df::DataFrame)
-    d = Dict(map(n->"$n"=>               # create a dictionary
+#=
+	"Convert a DataFrame to a Dict, replacing missing values with 0 or an empty string."
+	d = Dict(map(n->"$n"=>               # create a dictionary
               ( any(ismissing.(df[!,n])) ? # if column contains a missing
                     map(x-> !ismissing(x) ? # search for missings
                         x :                 # leave non-missing values alone
@@ -339,6 +342,8 @@ function convert_dataframe_to_dict_remove_missing(df::DataFrame)
                         , df[!,n])            # but replace missing with 0 or ""
                 : df[!,n] ), # if nothing is missing, just use column as is
             names(df) ))  
+=#
+	d = Dict(zip(names(df),collect.(eachcol(df))))
 end
 
 # ╔═╡ 28fc8de4-749b-4093-b32f-c398f8d27d3d
@@ -817,7 +822,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─eac67cc9-754b-4f7d-add8-93900a1b5b49
 # ╟─73c06bb1-be49-46bd-b7f1-c45cc56af7b4
 # ╟─ebfaa677-829b-4bf9-bdbb-19f3c87dd3a4
-# ╟─b0c3875b-ef07-4e92-a0a8-55f42b266c6b
+# ╠═b0c3875b-ef07-4e92-a0a8-55f42b266c6b
 # ╟─945f5a55-3026-4497-9ece-8af878c87788
 # ╠═57397ee4-9efc-48b3-b640-d2b7a10da633
 # ╟─8059a6a3-384a-4344-8a23-650ee0be10c2
