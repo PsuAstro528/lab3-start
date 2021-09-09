@@ -185,7 +185,7 @@ end
 # ╔═╡ 8255b5a9-cbe6-4604-bedd-0e366f311096
 md"""
 Let's check the filesizes for the JLD2 file to the CSV file.  
-The small CSV file we created is $small_jld2_filesize KB.  
+The small CSV file we created is $small_csv_filesize KB.  
 
 2g.  How large would you guess the JLD2 file will be?  Once you've made your prediction, mouse over the hint box.  If you were suprised, try to explain what happened.
 """
@@ -834,10 +834,10 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─f15d37a7-d962-4da0-977f-76729a3313be
 # ╟─28f195c4-4f61-4873-85d6-b4e3aaa3660f
 # ╠═3837e439-250b-4577-b0d7-93352ec19f6e
-# ╟─8255b5a9-cbe6-4604-bedd-0e366f311096
+# ╠═8255b5a9-cbe6-4604-bedd-0e366f311096
 # ╠═df9b701f-d314-4512-b2ea-1f6ae015166c
 # ╟─377f7527-a338-4526-bb24-9766c635e719
-# ╟─25f24754-16d4-4343-b54a-cf8ea1358ce9
+# ╠═25f24754-16d4-4343-b54a-cf8ea1358ce9
 # ╟─570fd826-23fd-46ee-bdb4-58fb0c45719a
 # ╠═691410bb-0472-4800-a90d-29ddf947de3e
 # ╟─8cbb1c90-bd94-44b5-80b6-81d38f3e6252
