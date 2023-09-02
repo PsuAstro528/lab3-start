@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: ['1.9']
+        julia-version: ['1.9.2']
         julia-arch: [x64] 
         os: [ubuntu-latest]
 
@@ -31,7 +31,7 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
-     - name: Cahce something
+      - name: Cahce something
         uses: julia-actions/cache@v1
       - name: Build Package
         uses: julia-actions/julia-buildpkg@v1
