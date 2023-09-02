@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -152,12 +152,12 @@ typeof(dict_from_astropy["KIC_ID"])
 typeof(dict_from_astropy["TCE_ID"])
 
 # ╔═╡ 02f638d9-ec2f-4072-9fb3-e6fabac1b1e6
-md"""Since many `KIC_ID`'s don't have an associated `TCE_ID`, there are many missing entries.  Python is trying to store a list with lots of empty entries efficiently, but PyCall doesn't (yet?) know how to deal with this `MaskedColumn` for us.  Working with the data when Julia can't know its type would be very inefficient.  Therefore, we want to create an array of Strings that allows Julia to represent this data more efficiently.  Technically, it will be an array where each element is either a `String` or a `missing`.  It took a little tinkering, but eventually, I figured out how to extract that data into an efficient Julia object.
+md"""Since many `KIC_ID`'s don't have an associated `TCE_ID`, there are many missing entries.  Python is trying to store a list with lots of empty entries efficiently, but PyCall doesn't (yet?) know how to deal with this `MaskedColumn` for us.  If a function can't be sure of the type of data it's received, then the function can't be compiled as efficiently as if the data types are known.  Therefore, we want to create an array of Strings that allows Julia to represent this data more efficiently.  Technically, it will be an array where each element is either a `String` or a `missing`.  It took a little tinkering, but eventually, I figured out how to extract that data into an efficient Julia object.
 """
 
 # ╔═╡ 481c5b7a-4660-4954-84f3-29d33bd73f3d
 begin
-	TCE_ID_list = map(x -> x != nothing ? x : missing, data_from_astropy.columns["TCE_ID"].data.tolist())
+	TCE_ID_list = map(x->isnothing(x) ? missing : x, data_from_astropy.columns["TCE_ID"].data.tolist())
 	TCE_ID_list_type = typeof(TCE_ID_list)
 	TCE_ID_list
 end
@@ -186,6 +186,9 @@ begin
 	small_dict = Dict(:a=>[1,2],:b=>[3.0,4.0],:c=>["hello",missing])
 	small_df1 = DataFrame(small_dict)
 	small_df2 = DataFrame(small_dict, copycols=false)
+	# Run once to make sure functions are compiled before benchmarking
+	DataFrame(dict_from_astropy)   
+	DataFrame(dict_from_astropy, copycols=false)
 end;
 
 # ╔═╡ 3d09d38a-ca72-43f2-bd85-17fc0e05a645
@@ -457,14 +460,43 @@ Therefore, most languages call a common [FITSIO library written in C](https://he
 Unfortunately, the FITSIO package isn't as polished as the others.  It expects a `Dict` rather than a `DataFrame`, and it can't handle missing values.  So I've provided some helper functions at the bottom of the notebook.  Also, FITS files have complicated headers, so I'll provide a function to read all the tabular data from a simple FITS file.  As usual, we'll use each function once, so that Julia compiles them before we start timing.
 """
 
+# ╔═╡ e05f16d6-eb50-49a9-bf14-95d63c9da7ff
+begin
+	filename_fits_small = replace(small_csv_filename, ".csv" => ".fits")  
+	write_dataframe_as_fits(joinpath(path,filename_fits_small),small_df)
+	read_fits_tables(joinpath(path,filename_fits_small))
+end;
+
 # ╔═╡ 3b232365-f2fe-4edb-a39f-3e37c8cbb666
 md"Now we can time how long it takes to write and read the data as FITS files."
+
+# ╔═╡ 1992595f-9976-4b18-bf9c-df8a73d30dc8
+begin
+	filename_fits_small # make sure have already compiled functions
+	filename_fits = replace(filename_ipac, ".txt" => ".fits") 
+	with_terminal() do 
+		@time write_dataframe_as_fits(filename_fits,df)
+	end
+end
 
 # ╔═╡ 568862b3-6fce-426a-a9e2-e558adf3932a
 md"""
 I'm ready to benchmark reading a FITS file. $(@bind ready_read_fits CheckBox()) 
 $(@bind go_read_fits Button("Rerun the benchmarks."))
 """
+
+# ╔═╡ 52f9edd0-79b0-4a9a-9930-3a05d3aa2447
+if ready_read_fits
+	go_read_fits
+	time_read_fits = @elapsed read_fits_tables(filename_fits)
+	md"It took $time_read_fits seconds to read the FITS file."
+end
+
+# ╔═╡ 90d5244e-17be-4601-b922-8c254f1248bf
+begin
+	fits_filesize = filesize(filename_fits) /1024^2
+	hint(md"The FITS file size is $fits_filesize MB versus $jld2_filesize MB for the JLD2 and $csv_filesize MB for the CSV.")
+end
 
 # ╔═╡ ae79ee89-d788-4612-8b1d-fc22d85c7744
 md"2k.  How do the read/write times and file sizes for FITS compare to CSV and JLD2?"
@@ -565,35 +597,6 @@ function read_fits_tables(filename::String)
 end
 
 
-# ╔═╡ e05f16d6-eb50-49a9-bf14-95d63c9da7ff
-begin
-	filename_fits_small = replace(small_csv_filename, ".csv" => ".fits")  
-	write_dataframe_as_fits(joinpath(path,filename_fits_small),small_df)
-	read_fits_tables(joinpath(path,filename_fits_small))
-end;
-
-# ╔═╡ 1992595f-9976-4b18-bf9c-df8a73d30dc8
-begin
-	filename_fits_small # make sure have already compiled functions
-	filename_fits = replace(filename_ipac, ".txt" => ".fits") 
-	with_terminal() do 
-		@time write_dataframe_as_fits(filename_fits,df)
-	end
-end
-
-# ╔═╡ 90d5244e-17be-4601-b922-8c254f1248bf
-begin
-	fits_filesize = filesize(filename_fits) /1024^2
-	hint(md"The FITS file size is $fits_filesize MB versus $jld2_filesize MB for the JLD2 and $csv_filesize MB for the CSV.")
-end
-
-# ╔═╡ 52f9edd0-79b0-4a9a-9930-3a05d3aa2447
-if ready_read_fits
-	go_read_fits
-	time_read_fits = @elapsed read_fits_tables(filename_fits)
-	md"It took $time_read_fits seconds to read the FITS file."
-end
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -605,6 +608,16 @@ JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+
+[compat]
+CSV = "~0.10.11"
+DataFrames = "~1.6.1"
+FITSIO = "~0.17.1"
+FileIO = "~1.16.1"
+JLD2 = "~0.4.33"
+PlutoTeachingTools = "~0.2.13"
+PlutoUI = "~0.7.52"
+PyCall = "~1.96.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -613,7 +626,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "0922eae2aa85343efe17c1ab07d7708cfebf065e"
+project_hash = "4d7b3c33160a2ec5ba79009b0e5679210ba2d795"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -823,9 +836,9 @@ version = "0.21.4"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "e8ab063deed72e14666f9d8af17bd5f9eab04392"
+git-tree-sha1 = "81dc6aefcbe7421bd62cb6ca0e700779330acff8"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.9.24"
+version = "0.9.25"
 
 [[deps.LaTeXStrings]]
 git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
@@ -971,9 +984,9 @@ version = "1.4.2"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
-git-tree-sha1 = "9673d39decc5feece56ef3940e5dafba15ba0f81"
+git-tree-sha1 = "03b4c25b43cb84cee5c90aa9b5ea0a78fd848d2f"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.1.2"
+version = "1.2.0"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -1154,7 +1167,7 @@ version = "17.4.0+0"
 # ╟─8c1d81ab-d215-4972-afeb-7e00bf6063c2
 # ╟─1607eac9-e76f-4d1f-a9ce-981ce3be9bea
 # ╠═f27e1e8f-15eb-4754-a94c-7f37c54b871e
-# ╠═80f02c3a-6751-48df-92ec-13f5c7d8c71e
+# ╟─80f02c3a-6751-48df-92ec-13f5c7d8c71e
 # ╟─624c9038-3008-4e78-a149-60796dacf9c0
 # ╟─2eb255d9-707d-4224-a0ce-fe90a1c69722
 # ╟─8571ccaf-5fbc-4593-82db-ead073a4074f
@@ -1176,9 +1189,9 @@ version = "17.4.0+0"
 # ╟─aa7c4dfe-a3d4-448b-a559-1bc7b338a1dc
 # ╠═a97f9c8e-dbd3-4613-9c6e-c471340ea2d6
 # ╟─7c7430a0-d16e-485b-bbd9-7f231fee853a
-# ╟─cebe52b3-386c-4d31-8497-c19b6c742577
+# ╠═cebe52b3-386c-4d31-8497-c19b6c742577
 # ╟─3d09d38a-ca72-43f2-bd85-17fc0e05a645
-# ╠═9257c879-d96f-4d2b-994e-d542617b0c65
+# ╟─9257c879-d96f-4d2b-994e-d542617b0c65
 # ╟─307a7a29-afa6-4c4d-88ae-4f757aeba892
 # ╠═afdc442a-2931-4129-824e-98431e1d8be2
 # ╟─c42deea3-acf1-491a-97bd-fdc472917584
