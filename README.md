@@ -1,10 +1,8 @@
 # Astro 528, Lab 3
 
 Before starting this lab, make sure you've successfully gotten setup to use git, Julia and Pluto.
-The first lab contained detailed instructions for using the Jupyter Lab server to work witih Pluto notebooks.  
-
 Remember, that you need follow the provided link to create your own private copy of this lab's repository on GitHub.com.   See the
-[help on the course website](https://psuastro528.github.io/tips/submitting/) for instructions on cloning, commiting, pushing and reviewing your work.
+[help on the course website](https://psuastro528.github.io/Fall2023/tips/labs/) for instructions on cloning, commiting, pushing and reviewing your work.
 
 ## Exercise 1: Dense Matrix-Vector Multiply
 #### Goals:  

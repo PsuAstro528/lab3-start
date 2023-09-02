@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -50,9 +50,17 @@ md"""
 """
 
 # ╔═╡ 7390b2d6-c1c2-4498-bcbb-1a8511e29b7d
-"Multiply matrix A and vector b by hand using columns for inner loop"
+"Multiply matrix A and vector b by hand using rows for inner loop"
 function multiply_matrix_vector_rows_inner(A::Matrix{T1}, b::Vector{T2})  where {T1<:Number, T2<:Number}
 	# INSERT CODE
+	@assert size(A,2) == length(b)
+	out = zeros(promote_type(eltype(A),eltype(b)), size(A,1))
+	@simd for j in 1:size(A,2)
+		for i in 1:size(A,1)
+			@inbounds out[i] += A[i,j]*b[j]
+		end
+	end
+	return out
 	return missing
 end
 
@@ -75,6 +83,25 @@ begin
     end
 end
 
+# ╔═╡ fdc41658-54cc-4820-b5ca-4f7bf0330e7d
+hint(md"""
+You can access the second element of a vector, x, using the syntax `x[2]`.
+
+You can access the third row of the first column of a Matrix or 2-d array, `A` using the syntax
+`A[3,1]`.
+""")
+
+# ╔═╡ a32bd7f7-7dcb-4c0c-84f1-b150f30644bd
+hint(md"""
+To demonstrate how to write a `for` loop in julia, the following code computes the sum of the first 10 entries in a vector, `x`.
+```julia
+total = 0.0
+for i in 1:10
+    total += x[i]
+end
+```
+""")
+
 # ╔═╡ fe202fd4-6d65-4b2e-afa7-67b9ff67f8f0
 md"""
 ### Regression testing (1/2)
@@ -86,6 +113,9 @@ Since we have a trusted routine to compute the matrix-vector product, we can bui
 # ╔═╡ f696696f-1a96-4d65-b2d0-3b7686402b87
 function test_mul_mat_vec(func::Function )
 	# INSERT CODE
+	A = rand(2,4)
+	b = rand(4)
+	return all(func(A,b) .≈ multiply_matrix_vector_default(A,b))
 	return missing
 end
 
@@ -266,7 +296,15 @@ Write a function `multiply_matrix_vector_cols_inner(A,b)` that takes a matrix A 
 # ╔═╡ e5c7bebd-8ecc-483d-91e1-6e51396078f8
 "Multiply matrix A and vector b by hand using columns for inner loop"
 function multiply_matrix_vector_cols_inner(A::AbstractMatrix{T1}, b::AbstractVector{T2})  where {T1<:Number, T2<:Number}
-    # INSERT CODE
+   # INSERT CODE
+	@assert size(A,2) == length(b)
+	out = zeros(promote_type(eltype(A),eltype(b)), size(A,1))
+	@simd for i in 1:size(A,1)
+		for j in 1:size(A,2)
+			@inbounds out[i] += A[i,j]*b[j]
+		end
+	end
+	return out
 	return missing
 end
 
@@ -374,7 +412,7 @@ end
 # ╔═╡ 9028e886-dd3a-4c68-a4e9-d3f9ae65cbdf
 md"""
 ### Benchmark as a function of problem size
-Now, let's plotthe performance of all three functions as a function of problem size.  
+Now, let's plot the performance of all three functions as a function of problem size.  
 """
 
 # ╔═╡ 4781aac2-5f70-4e95-afc0-353c1419c97c
@@ -418,23 +456,23 @@ end
 # ╔═╡ 412777aa-ec37-4062-a3e6-4e844add94c0
 begin 
 	local plt = plot_benchmarks(nrows_benchmark_plt,times_square_default_plt, times_square_rows_plt,times_square_cols_plt)
-	title!(plt,"Square")
+	title!(plt,"Square Matrix multiply")
 end
 
 # ╔═╡ 988b3ec3-71cd-4ea4-b007-e7d2c16d3502
 md"The above plot is for square problems.  You can look at additional benchmarks before for short or tall vectors below."
 
 # ╔═╡ b2132261-aa1f-4db0-a6ef-95f763f390d9
-ncols_short_benchmark_plt = max.(1,floor.(Int64,nrows_benchmark_plt ./ 4 ))
+ncols_short_benchmark_plt = max.(1,floor.(Int64,nrows_benchmark_plt ./ 4));
 
 # ╔═╡ d871280d-4e70-41a3-bee2-f81c1844ef2b
-ncols_tall_benchmark_plt = 4 .* nrows_benchmark_plt
+ncols_tall_benchmark_plt = 4 .* nrows_benchmark_plt;
 
 # ╔═╡ b57bfd3b-1d81-4256-8634-41173b2ed93a
-(times_short_default_plt, times_short_rows_plt, times_short_cols_plt ) = run_benchmarks(nrows_benchmark_plt, ncols_short_benchmark_plt)
+(times_short_default_plt, times_short_rows_plt, times_short_cols_plt ) = run_benchmarks(nrows_benchmark_plt, ncols_short_benchmark_plt);
 
 # ╔═╡ b6879ac5-9521-4b9b-b488-3c98ed87960a
-(times_tall_default_plt, times_tall_rows_plt, times_tall_cols_plt ) = run_benchmarks(nrows_benchmark_plt, ncols_tall_benchmark_plt)
+(times_tall_default_plt, times_tall_rows_plt, times_tall_cols_plt ) = run_benchmarks(nrows_benchmark_plt, ncols_tall_benchmark_plt);
 
 # ╔═╡ 07ea6486-edba-4174-b0ee-0cf98096b785
 begin
@@ -482,6 +520,13 @@ PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoTest = "cb4044da-4d16-4ffa-a6a3-8cad7f73ebdc"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[compat]
+BenchmarkTools = "~1.3.2"
+Plots = "~1.39.0"
+PlutoTeachingTools = "~0.2.13"
+PlutoTest = "~0.2.2"
+PlutoUI = "~0.7.52"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -490,7 +535,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "c0616f55adccd36904143679582293766beebbdd"
+project_hash = "923c935d603181340a33136c1a29dbe2fd6819e0"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -798,9 +843,9 @@ version = "2.1.91+0"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "e8ab063deed72e14666f9d8af17bd5f9eab04392"
+git-tree-sha1 = "81dc6aefcbe7421bd62cb6ca0e700779330acff8"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.9.24"
+version = "0.9.25"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -892,10 +937,10 @@ uuid = "7add5ba3-2f88-524e-9cd5-f83b8a55f7b8"
 version = "1.42.0+0"
 
 [[deps.Libiconv_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "c7cb1f5d892775ba13767a87c7ada0b980ea0a71"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "f9557a255370125b405568f9767d6d195822a175"
 uuid = "94ce4f54-9a6c-5748-9c1c-f9c7231a4531"
-version = "1.16.1+2"
+version = "1.17.0+0"
 
 [[deps.Libmount_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -940,9 +985,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[deps.LoggingExtras]]
 deps = ["Dates", "Logging"]
-git-tree-sha1 = "a03c77519ab45eb9a34d3cfe2ca223d79c064323"
+git-tree-sha1 = "0d097476b6c381ab7906460ef1ef1638fbce1d91"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.LoweredCodeUtils]]
 deps = ["JuliaInterpreter"]
@@ -1084,9 +1129,9 @@ version = "1.3.5"
 
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Preferences", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "9f8675a55b37a70aa23177ec110f6e3f4dd68466"
+git-tree-sha1 = "ccee59c6e48e6f2edf8a5b64dc817b6729f99eb5"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.38.17"
+version = "1.39.0"
 
     [deps.Plots.extensions]
     FileIOExt = "FileIO"
@@ -1134,9 +1179,9 @@ version = "0.7.52"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
-git-tree-sha1 = "9673d39decc5feece56ef3940e5dafba15ba0f81"
+git-tree-sha1 = "03b4c25b43cb84cee5c90aa9b5ea0a78fd848d2f"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.1.2"
+version = "1.2.0"
 
 [[deps.Preferences]]
 deps = ["TOML"]
@@ -1311,9 +1356,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "607c142139151faa591b5e80d8055a15e487095b"
+git-tree-sha1 = "a72d22c7e13fe2de562feda8645aa134712a87ee"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.16.3"
+version = "1.17.0"
 
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"
@@ -1347,10 +1392,10 @@ uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.25.0+0"
 
 [[deps.XML2_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "93c41695bc1c08c46c5899f4fe06d6ead504bb73"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
+git-tree-sha1 = "04a51d15436a572301b5abbb9d099713327e9fc4"
 uuid = "02c8fc9c-b97f-50b9-bbe4-9be30ff0a78a"
-version = "2.10.3+0"
+version = "2.10.4+0"
 
 [[deps.XSLT_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgcrypt_jll", "Libgpg_error_jll", "Libiconv_jll", "Pkg", "XML2_jll", "Zlib_jll"]
@@ -1578,6 +1623,8 @@ version = "1.4.1+0"
 # ╟─0024c171-234c-4c4b-9742-064ad8136451
 # ╠═7390b2d6-c1c2-4498-bcbb-1a8511e29b7d
 # ╟─8723c88f-21eb-4980-876c-cc5d12e48df5
+# ╟─fdc41658-54cc-4820-b5ca-4f7bf0330e7d
+# ╟─a32bd7f7-7dcb-4c0c-84f1-b150f30644bd
 # ╟─fe202fd4-6d65-4b2e-afa7-67b9ff67f8f0
 # ╠═f696696f-1a96-4d65-b2d0-3b7686402b87
 # ╟─6f5fc5c6-76d7-4a68-952f-d4e2f2932b07
@@ -1594,7 +1641,7 @@ version = "1.4.1+0"
 # ╟─454faa95-2134-436d-a39b-02137ba4e9fa
 # ╟─af72841c-1f0e-4aa7-a2ed-d01c787b9f31
 # ╟─a1d17f60-118c-4f3e-8918-50d1411e268b
-# ╟─fb42c219-6312-4325-a362-5d8f8d20fd91
+# ╠═fb42c219-6312-4325-a362-5d8f8d20fd91
 # ╟─b0d24460-5bda-4ab0-9735-319a1cec55eb
 # ╟─e536cf92-6c80-4b1d-b849-c5a9ab542e9f
 # ╟─28e265b6-148f-418a-a01f-79986d155c90
@@ -1628,7 +1675,7 @@ version = "1.4.1+0"
 # ╠═99fd596c-efae-4cf1-8e91-f46b5791f3f3
 # ╟─a65d3972-9870-4a76-bba7-bcaccc10ecfb
 # ╟─9028e886-dd3a-4c68-a4e9-d3f9ae65cbdf
-# ╠═4781aac2-5f70-4e95-afc0-353c1419c97c
+# ╟─4781aac2-5f70-4e95-afc0-353c1419c97c
 # ╟─d615c199-4b33-4844-a87f-c9512f2481a3
 # ╟─2eef234f-b93b-4fe4-ac50-445da9ffb8e7
 # ╟─96476ef8-3275-492c-9caf-4c2702d84167
@@ -1636,8 +1683,8 @@ version = "1.4.1+0"
 # ╟─988b3ec3-71cd-4ea4-b007-e7d2c16d3502
 # ╠═b2132261-aa1f-4db0-a6ef-95f763f390d9
 # ╠═d871280d-4e70-41a3-bee2-f81c1844ef2b
-# ╠═b57bfd3b-1d81-4256-8634-41173b2ed93a
-# ╠═b6879ac5-9521-4b9b-b488-3c98ed87960a
+# ╟─b57bfd3b-1d81-4256-8634-41173b2ed93a
+# ╟─b6879ac5-9521-4b9b-b488-3c98ed87960a
 # ╟─07ea6486-edba-4174-b0ee-0cf98096b785
 # ╟─19b9c838-ad9e-45f2-bc46-ea239415b175
 # ╠═d59f6e79-4376-42ec-abdc-baa0b4541009
