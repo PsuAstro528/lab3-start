@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
@@ -53,14 +53,6 @@ md"""
 "Multiply matrix A and vector b by hand using rows for inner loop"
 function multiply_matrix_vector_rows_inner(A::Matrix{T1}, b::Vector{T2})  where {T1<:Number, T2<:Number}
 	# INSERT CODE
-	@assert size(A,2) == length(b)
-	out = zeros(promote_type(eltype(A),eltype(b)), size(A,1))
-	@simd for j in 1:size(A,2)
-		for i in 1:size(A,1)
-			@inbounds out[i] += A[i,j]*b[j]
-		end
-	end
-	return out
 	return missing
 end
 
@@ -113,9 +105,6 @@ Since we have a trusted routine to compute the matrix-vector product, we can bui
 # ╔═╡ f696696f-1a96-4d65-b2d0-3b7686402b87
 function test_mul_mat_vec(func::Function )
 	# INSERT CODE
-	A = rand(2,4)
-	b = rand(4)
-	return all(func(A,b) .≈ multiply_matrix_vector_default(A,b))
 	return missing
 end
 
@@ -297,14 +286,6 @@ Write a function `multiply_matrix_vector_cols_inner(A,b)` that takes a matrix A 
 "Multiply matrix A and vector b by hand using columns for inner loop"
 function multiply_matrix_vector_cols_inner(A::AbstractMatrix{T1}, b::AbstractVector{T2})  where {T1<:Number, T2<:Number}
    # INSERT CODE
-	@assert size(A,2) == length(b)
-	out = zeros(promote_type(eltype(A),eltype(b)), size(A,1))
-	@simd for i in 1:size(A,1)
-		for j in 1:size(A,2)
-			@inbounds out[i] += A[i,j]*b[j]
-		end
-	end
-	return out
 	return missing
 end
 
