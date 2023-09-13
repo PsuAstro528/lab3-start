@@ -5,7 +5,7 @@ using Pkg, Pluto;
 
 
 @testset "Running ex1.jl" begin
-   Pluto.activate_notebook_environment("ex1.jl"); Pkg.instantiate(); 
+   Pluto.activate_notebook_environment("../ex1.jl"); 
    Pkg.instantiate();
    include("../ex1.jl")
 end;
